@@ -306,7 +306,7 @@ const Dashboard = ({ userInfo, onLogout }) => {
     const height = 850;
     canvas.width = width;
     canvas.height = height;
-    
+    y
     // Fill background
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
