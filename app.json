@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "expo-sample-app",
+    "slug": "expo-sample-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.descope.exposampleapp"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.descope.exposampleapp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b566d1a2-bca5-4dde-b121-8c63535ea8c0"
+      }
+    },
+    "cli": {
+      "appVersionSource": "appVersion"
+    },
+    "owner": "manikandan26"
+  }
+}
