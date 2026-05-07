@@ -8,331 +8,90 @@
     <title>MA Organization - Bill Management</title>
     
     <!-- React & ReactDOM from CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
+    <!-- Load actual components via dynamic import -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://unpkg.com/react@18/umd/react.development.js",
+            "react-dom": "https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+        }
+    }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        html, body, #root {
-            width: 100%;
-            height: 100%;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #f8f9fa;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { width: 100%; height: 100%; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: #f8f9fa; }
+        .loading { display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 18px; color: #666; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-right: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Login Screen Styles */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
+        /* LOGIN STYLES */
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
+        .login-box h1 { text-align: center; color: #333; margin-bottom: 10px; font-size: 24px; }
+        .login-box h2 { text-align: center; color: #666; margin-bottom: 30px; font-size: 16px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .login-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+        .login-btn:hover { transform: translateY(-2px); }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .error-banner { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb; }
+        .demo-creds { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 5px; font-size: 12px; color: #666; }
+        .demo-creds strong { color: #333; }
 
-        .login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-box h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .login-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .demo-creds {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 5px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .demo-creds strong {
-            color: #333;
-        }
-
-        /* Dashboard Styles */
-        .dashboard-container {
-            display: flex;
-            height: 100vh;
-            background: #f8f9fa;
-        }
-
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .sidebar h2 {
-            margin-bottom: 30px;
-            font-size: 20px;
-        }
-
-        .user-info {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .user-info p {
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 20px;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 30px;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .dashboard-header h1 {
-            color: #333;
-            font-size: 28px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .controls input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .controls button {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .controls button:hover {
-            background: #764ba2;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #f5f5f5;
-        }
-
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-            border-bottom: 2px solid #ddd;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        tr:hover {
-            background: #f9f9f9;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            margin-right: 5px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .download-btn {
-            background: #28a745;
-            color: white;
-        }
-
-        .download-btn:hover {
-            background: #218838;
-        }
-
-        .delete-btn {
-            background: #dc3545;
-            color: white;
-        }
-
-        .delete-btn:hover {
-            background: #c82333;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .empty-state h3 {
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .error-banner {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border: 1px solid #f5c6cb;
-        }
-
-        .success-banner {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border: 1px solid #c3e6cb;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        /* DASHBOARD STYLES */
+        .dashboard-container { display: flex; height: 100vh; background: #f8f9fa; }
+        .sidebar { width: 250px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; overflow-y: auto; }
+        .sidebar h2 { margin-bottom: 30px; font-size: 20px; }
+        .user-info { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .user-info p { font-size: 12px; margin-bottom: 5px; }
+        .logout-btn { width: 100%; padding: 10px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 5px; cursor: pointer; font-size: 14px; margin-top: 20px; }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        .main-content { flex: 1; overflow-y: auto; padding: 30px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .dashboard-header h1 { color: #333; font-size: 28px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .controls input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; flex: 1; }
+        .controls button { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .controls button:hover { background: #764ba2; }
+        .table-container { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f5f5f5; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { font-weight: 600; color: #333; border-bottom: 2px solid #ddd; }
+        tr:hover { background: #f9f9f9; }
+        .action-btn { padding: 6px 12px; margin-right: 5px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; }
+        .download-btn { background: #28a745; color: white; }
+        .download-btn:hover { background: #218838; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state h3 { color: #666; margin-bottom: 10px; }
+        .success-banner { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb; }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div class="loading">
+            <div class="spinner"></div>
+            <span>Loading...</span>
+        </div>
+    </div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Google Sheets Configuration
+        // Google Sheets Config
         const GOOGLE_API_KEY = 'AIzaSyCI8acGqx7YK-ou16lPvkvx0Gfudi96_pg';
         const SHEET_ID = '1QKTL_5g5Y3XsUsq2GDyyHdSDAszuMaZVlIkkxg7mDCU';
         const SHEET_NAME = 'Sheet1';
 
-        // Login Screen Component
-        function LoginScreen({ onLogin, onLocalAuth }) {
+        // LoginScreen Component
+        function LoginScreen({ onLocalAuth }) {
             const [username, setUsername] = useState('');
             const [password, setPassword] = useState('');
             const [error, setError] = useState('');
@@ -343,10 +102,8 @@
                 setError('');
                 setLoading(true);
 
-                // Demo credentials
                 if (username === 'Admin' && password === 'galaxy@2026') {
                     onLocalAuth(username);
-                    setLoading(false);
                 } else {
                     setError('Invalid credentials. Try Admin / galaxy@2026');
                     setLoading(false);
@@ -357,9 +114,7 @@
                 <div className="login-container">
                     <div className="login-box">
                         <h1>MA Organization</h1>
-                        <h2 style={{ textAlign: 'center', fontSize: '16px', color: '#666', marginBottom: '30px' }}>
-                            Bill Management System
-                        </h2>
+                        <h2>Bill Management System</h2>
                         
                         {error && <div className="error-banner">{error}</div>}
                         
@@ -372,6 +127,7 @@
                                     onChange={(e) => setUsername(e.target.value)}
                                     placeholder="Enter username"
                                     disabled={loading}
+                                    autoFocus
                                 />
                             </div>
                             
@@ -386,11 +142,7 @@
                                 />
                             </div>
                             
-                            <button 
-                                type="submit" 
-                                className="login-btn"
-                                disabled={loading}
-                            >
+                            <button type="submit" className="login-btn" disabled={loading}>
                                 {loading ? 'Logging in...' : 'Login'}
                             </button>
                         </form>
@@ -445,23 +197,11 @@
             };
 
             const handleDownload = (bill) => {
-                // Create a simple text file for download
-                const content = `
-INVOICE
-=====================================
-Name: ${bill.Name || 'N/A'}
-Amount: ${bill.Amount || 'N/A'}
-Date: ${bill.Date || 'N/A'}
-Description: ${bill.Description || 'N/A'}
-Status: ${bill.Status || 'N/A'}
-=====================================
-Downloaded: ${new Date().toLocaleString()}
-                `;
-
+                const content = `INVOICE\n=====================================\nName: ${bill.Name || 'N/A'}\nAmount: ${bill.Amount || 'N/A'}\nDate: ${bill.Date || 'N/A'}\nDescription: ${bill.Description || 'N/A'}\nStatus: ${bill.Status || 'N/A'}\n=====================================\nDownloaded: ${new Date().toLocaleString()}`;
+                
                 const element = document.createElement('a');
                 element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
                 element.setAttribute('download', `Invoice_${bill.Name}_${Date.now()}.txt`);
-                element.style.display = 'none';
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
@@ -471,37 +211,25 @@ Downloaded: ${new Date().toLocaleString()}
             };
 
             const filteredBills = bills.filter(bill =>
-                Object.values(bill).some(val =>
-                    String(val).toLowerCase().includes(searchTerm.toLowerCase())
-                )
+                Object.values(bill).some(val => String(val).toLowerCase().includes(searchTerm.toLowerCase()))
             );
 
             return (
                 <div className="dashboard-container">
                     <div className="sidebar">
                         <h2>📊 Dashboard</h2>
-                        
                         <div className="user-info">
                             <p>Logged in as:</p>
-                            <p><strong>{userInfo?.email || 'User'}</strong></p>
-                            <p style={{ fontSize: '11px', marginTop: '10px' }}>
-                                Role: Administrator
-                            </p>
+                            <p><strong>{userInfo}</strong></p>
+                            <p style={{ fontSize: '11px', marginTop: '10px' }}>Role: Administrator</p>
                         </div>
-
-                        <button className="logout-btn" onClick={onLogout}>
-                            Logout
-                        </button>
+                        <button className="logout-btn" onClick={onLogout}>Logout</button>
                     </div>
 
                     <div className="main-content">
                         <div className="dashboard-header">
                             <h1>Bills & Invoices</h1>
-                            <button 
-                                className="controls" 
-                                style={{ background: '#667eea', padding: '10px 20px' }}
-                                onClick={fetchBills}
-                            >
+                            <button className="controls" style={{ background: '#667eea', padding: '10px 20px' }} onClick={fetchBills}>
                                 🔄 Refresh
                             </button>
                         </div>
@@ -520,49 +248,29 @@ Downloaded: ${new Date().toLocaleString()}
                         </div>
 
                         {loading ? (
-                            <div className="loading">
+                            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
                                 <div className="spinner"></div>
                                 <p>Loading bills...</p>
                             </div>
                         ) : filteredBills.length === 0 ? (
                             <div className="empty-state">
                                 <h3>No bills found</h3>
-                                <p>{searchTerm ? 'Try a different search term' : 'Add bills to the spreadsheet to see them here'}</p>
-                                {searchTerm && (
-                                    <button 
-                                        className="controls" 
-                                        style={{ background: '#667eea', padding: '10px 20px', marginTop: '15px' }}
-                                        onClick={() => setSearchTerm('')}
-                                    >
-                                        Clear Search
-                                    </button>
-                                )}
+                                <p>{searchTerm ? 'Try a different search' : 'Add bills to the spreadsheet'}</p>
                             </div>
                         ) : (
                             <div className="table-container">
                                 <table>
                                     <thead>
                                         <tr>
-                                            {Object.keys(filteredBills[0]).map(header => (
-                                                <th key={header}>{header}</th>
-                                            ))}
+                                            {Object.keys(filteredBills[0]).map(header => <th key={header}>{header}</th>)}
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filteredBills.map((bill, idx) => (
                                             <tr key={idx}>
-                                                {Object.values(bill).map((value, i) => (
-                                                    <td key={i}>{value}</td>
-                                                ))}
-                                                <td>
-                                                    <button 
-                                                        className="action-btn download-btn"
-                                                        onClick={() => handleDownload(bill)}
-                                                    >
-                                                        Download
-                                                    </button>
-                                                </td>
+                                                {Object.values(bill).map((value, i) => <td key={i}>{value}</td>)}
+                                                <td><button className="action-btn download-btn" onClick={() => handleDownload(bill)}>Download</button></td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -580,33 +288,29 @@ Downloaded: ${new Date().toLocaleString()}
 
         // Main App Component
         function App() {
-            const [authTokens, setAuthTokens] = useState(null);
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
             const [userInfo, setUserInfo] = useState(null);
 
-            const handleLocalAuth = (email) => {
-                const mockToken = 'mock_token_' + Date.now();
-                setAuthTokens({ accessToken: mockToken });
-                setUserInfo({ email });
+            const handleLogin = (email) => {
+                setIsLoggedIn(true);
+                setUserInfo(email);
             };
 
-            const logout = () => {
-                setAuthTokens(null);
+            const handleLogout = () => {
+                setIsLoggedIn(false);
                 setUserInfo(null);
             };
 
-            return authTokens ? (
-                <Dashboard userInfo={userInfo} onLogout={logout} />
+            return isLoggedIn ? (
+                <Dashboard userInfo={userInfo} onLogout={handleLogout} />
             ) : (
-                <LoginScreen onLocalAuth={handleLocalAuth} />
+                <LoginScreen onLocalAuth={handleLogin} />
             );
         }
 
-        // Render the app
+        // Render
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
-
-    <!-- Babel for JSX transformation -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </body>
 </html>
