@@ -3,6 +3,7 @@
     "env": {
         "NODE_ENV": "production"
     },
+    "buildCommand": "npm run build",
     "builds": [
         {
             "src": "server-static.js",
