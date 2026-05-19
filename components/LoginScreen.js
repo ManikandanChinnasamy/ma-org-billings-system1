@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const ADMIN_USERNAME = "Admin";
 const ADMIN_PASSWORD = "galaxy@2026";
 
-const LoginScreen = ({ onLogin, request, onLocalAuth }) => {
+const LoginScreen = ({ onLocalAuth }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
